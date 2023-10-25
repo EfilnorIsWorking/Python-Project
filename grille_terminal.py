@@ -19,7 +19,7 @@ def afficher_grille(taille, perso, bouffes):
                     nourriture = "N"
 
             #Affichage de la case
-            print("|""bonhomme}{nourriture}", end= "|")
+            print("|{bonhomme}{nourriture}", end= "|")
         print("\n")
 
 #Génération de nourriture
