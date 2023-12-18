@@ -8,10 +8,9 @@ import sys
 
 taille_grille = 100
 
-class Food:
+class Food(Entite):
     TYPE = "FOOD"
     def __init__(self):
-        self.x = random.randint(0, taille_grille - 1)
-        self.y = random.randint(0, taille_grille - 1)
+        super().__init__()
         self.energy = 50
         self.has_been_eaten = False
