@@ -7,7 +7,7 @@ import array
 import sys
 
 
-class Blob :
+class Blob(Entite) :
     MUTATION_RAT = 0.1
     def __init__(self, key, parent_name1, parent_name2):
         self.energy = 100
