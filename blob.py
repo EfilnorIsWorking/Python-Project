@@ -5,6 +5,7 @@ import array
 import sys
 from grille import *
 from constantes import *
+from food import *
 
 
 def get_cuberoot(x):
@@ -56,6 +57,9 @@ class Blob(Entite):
         #modifier de manière à observer ce qu'il y a dans les cases
         #move(self)
 
+    def eat(self, food):
+        self.energy += food.energy
+        food.has_been_eaten = True
 
     def move(self):
         direction = randint(0,5)
@@ -106,3 +110,11 @@ def encounter_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la m
         bob2.alive = False
         bob1.energy -= (1/2)*(bob2.mass/bob1.mass)*bob2.energy + (1/2)*bob2.energy
 
+
+def creer_premier_Blob():
+    bobs = []
+    for ligne in range(taille_grille):
+        for colonne in range(taille_grille):
+            for i in nbBob:
+                bob = Blob(key=i, parent_name1=None, parent_name2=None)
+                bobs.append(bob)
