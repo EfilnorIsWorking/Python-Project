@@ -1,5 +1,6 @@
 import pygame
 import sys
+from io import BytesIO
 
 pygame.init()
 
