@@ -26,6 +26,9 @@ class Blob(Entite):
         self.alive = True
 
         self.key = key
+
+        self.buffer_vitesse = 0.0
+
         if (parent_name1 == None) and (parent_name2 == None):
             self.parent_key1 = 0
             self.parent_key2 = 0
@@ -56,25 +59,28 @@ class Blob(Entite):
 
     def move(self):
         direction = randint(0,5)
-        print(direction)
-        if direction == 0 :     #DOWN
-            self.y += self.vitesse
+        if direction == 0 : #DOWN
+            self.buffer_vitesse += self.vitesse
+            self.y += int(self.buffer_vitesse)
             self.energy -= self.vitesse*self.vitesse
+            self.buffer_vitesse -= int(self.buffer_vitesse)
 
         elif direction == 1 :   #UP
-            self.y -= self.vitesse
+            self.buffer_vitesse += self.vitesse
+            self.y -= int(self.buffer_vitesse)
             self.energy -= self.vitesse*self.vitesse*self.mass
 
         elif direction == 2 :   #RIGHT
-            self.x += self.vitesse
+            self.buffer_vitesse += self.vitesse
+            self.x += int(self.buffer_vitesse)
             self.energy -= self.vitesse*self.vitesse*self.mass
 
         elif direction == 3:    #LEFT
-            self.x -= self.vitesse
+            self.buffer_vitesse += self.vitesse
+            self.x -= int(self.buffer_vitesse)
             self.energy -= self.vitesse*self.vitesse*self.mass
         else :
             self.energy -= 0.5 #STAY
-        #FAIRE BUFFER DIRECTIONNEL
 
     def energyGain (self, v):
         if (v<energy_max):
