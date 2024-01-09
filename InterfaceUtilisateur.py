@@ -5,7 +5,7 @@ pygame.init()
 
 original_largeur, original_hauteur = 900, 450
 largeur, hauteur = original_largeur, original_hauteur
-image_url = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/background.jpg"
+image_url = "background.jpg"
 window_surface = pygame.display.set_mode((largeur, hauteur))
 pygame.display.set_caption("The Game Of Life")
 
