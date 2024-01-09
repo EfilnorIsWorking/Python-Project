@@ -1,20 +1,29 @@
 import os
 import random
 import math
-import pygame
-from PIL import Image
 import array
 import sys
+from grille import *
+from constantes import *
 
 
-class Blob(Entite) :
-    MUTATION_RAT = 0.1
+def get_cuberoot(x):
+    if x < 0:
+        x = abs(x)
+        cube_root = pow(x, 1 / 3) * (-1)
+    else:
+        cube_root = pow(x, 1 / 3)
+
+    return cube_root
+
+
+class Blob(Entite):
+    MUTATION_RAT = mutv
     def __init__(self, key, parent_name1, parent_name2):
         self.energy = 100
         self.energy_max = 200
 
         self.alive = True
-        
 
         self.key = key
         self.parent_key1 = parent_name1.key
@@ -24,20 +33,22 @@ class Blob(Entite) :
             self.vitesse = random(parent_name1.vitesse - MUTATION_RAT, parent_name1.vitesse + MUTATION_RAT)
             self.mass = random(parent_name1.mass - MUTATION_RAT, parent_name1.mass + MUTATION_RAT)
             self.perception += random.randint(-1, 1)
-            self.x = parent_name1.x
-            self.y = parent_name1.y
+            self.position = parent_name1.position
         else :
             self.vitesse = 1
             self.mass = 1
             self.perception = 0
             super().__init__()
 
-    def where_to_go(self)
+        self.size = get_cuberoot(self.mass)
+
+    #def where_to_go(self, grille):
         #modifier de manière à observer ce qu'il y a dans les cases
-        move(self, #direction)
+        #move(self)
 
 
-    def move(self, direction):
+    def move(self):
+        direction = random.randin(0,5)
         if direction == 0 :     #DOWN
             self.y += self.vitesse
             self.energy -= self.vitesse*self.vitesse
@@ -50,11 +61,11 @@ class Blob(Entite) :
             self.x += self.vitesse
             self.energy -= self.vitesse*self.vitesse*self.mass
 
-        elif direction == 3:                   #LEFT
+        elif direction == 3:    #LEFT
             self.x -= self.vitesse
             self.energy -= self.vitesse*self.vitesse*self.mass
         else :
-            self.energy -= 0.5
+            self.energy -= 0.5 #STAY
         #FAIRE BUFFER DIRECTIONNEL
 
     def energyGain (self, v):
@@ -73,11 +84,10 @@ def birth_parth(bobMom):
        bobMom.energy -= 150
        return bob
 
-def encounter_bobs(bob1, bob2):
-    if (bob1.mass/bob2.mass < 2/3)
+def encounter_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la même case
+    if (bob1.mass/bob2.mass) < 2/3 :
         bob1.alive = False
         bob2.energy -= (1/2)*(bob1.mass/bob2.mass)*bob1.energy + (1/2)*bob1.energy
-    if (bob2.mass/bob1.mass < 2/3)
+    if (bob2.mass/bob1.mass) < 2/3 :
         bob2.alive = False
         bob1.energy -= (1/2)*(bob2.mass/bob1.mass)*bob2.energy + (1/2)*bob2.energy
-
