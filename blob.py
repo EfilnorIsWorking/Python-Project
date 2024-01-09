@@ -1,5 +1,5 @@
 import os
-import random
+from random import *
 import math
 import array
 import sys
@@ -18,22 +18,29 @@ def get_cuberoot(x):
 
 
 class Blob(Entite):
-    MUTATION_RAT = mutv
+
     def __init__(self, key, parent_name1, parent_name2):
         self.energy = 100
         self.energy_max = 200
-
+        self.perception = 0
         self.alive = True
 
         self.key = key
-        self.parent_key1 = parent_name1.key
-        self.parent_key2 = parent_name2.key
+        if (parent_name1 == None) and (parent_name2 == None):
+            self.parent_key1 = 0
+            self.parent_key2 = 0
+        else :
+            self.parent_key1 = parent_name1
+            self.parent_key2 = parent_name2
+
+
 
         if (self.parent_key1 != 0):
-            self.vitesse = random(parent_name1.vitesse - MUTATION_RAT, parent_name1.vitesse + MUTATION_RAT)
-            self.mass = random(parent_name1.mass - MUTATION_RAT, parent_name1.mass + MUTATION_RAT)
-            self.perception += random.randint(-1, 1)
-            self.position = parent_name1.position
+            self.vitesse = uniform(parent_name1.vitesse - mutv, parent_name1.vitesse + mutv)
+            self.mass = uniform(parent_name1.mass - mutv, parent_name1.mass + mutv)
+            self.perception += randint(-1, 1)
+            self.x = parent_name1.x
+            self.y = parent_name1.x
         else :
             self.vitesse = 1
             self.mass = 1
@@ -48,7 +55,8 @@ class Blob(Entite):
 
 
     def move(self):
-        direction = random.randin(0,5)
+        direction = randint(0,5)
+        print(direction)
         if direction == 0 :     #DOWN
             self.y += self.vitesse
             self.energy -= self.vitesse*self.vitesse
@@ -79,7 +87,7 @@ class Blob(Entite):
 
 def birth_parth(bobMom):
     if bobMom.energy == energy_max :
-       bob = Blob()
+       bob = Blob(key = 10, parent_name1 = bobMom, parent_name2 = None)
        bob.energy = 50
        bobMom.energy -= 150
        return bob
@@ -91,3 +99,4 @@ def encounter_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la m
     if (bob2.mass/bob1.mass) < 2/3 :
         bob2.alive = False
         bob1.energy -= (1/2)*(bob2.mass/bob1.mass)*bob2.energy + (1/2)*bob2.energy
+
