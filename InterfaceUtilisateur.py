@@ -5,14 +5,14 @@ pygame.init()
 
 original_largeur, original_hauteur = 900, 450
 largeur, hauteur = original_largeur, original_hauteur
-image_url = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/background.jpg"
+image_url = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/background.jpg"
 original_image = pygame.image.load(image_url)
 background = pygame.transform.scale(original_image, (largeur, hauteur))
 
 window_surface = pygame.display.set_mode((largeur, hauteur))
 pygame.display.set_caption("The Game Of Life")
 
-instructions_image_path = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/instructions.jpg"
+instructions_image_path = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/background.jpg"
 instructions_image = pygame.image.load(instructions_image_path)
 instructions_image = pygame.transform.scale(instructions_image, (largeur, hauteur))
 
@@ -28,8 +28,8 @@ vert = (164, 205, 50)
 capacite_bob = 1
 luminosite = 1.0
 
-musique = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/start.mp3"
-mario = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/mario.mp3"
+musique = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/start.mp3"
+mario = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/mario.mp3"
 
 fullscreen = False
 
