@@ -29,7 +29,7 @@ capacite_bob = 1
 luminosite = 1.0
 
 musique = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/mario.mp3"
-mario = "/home/ibighrman/projet_python/mario.mp3"
+mario = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/start.mp3"
 
 fullscreen = False
 
