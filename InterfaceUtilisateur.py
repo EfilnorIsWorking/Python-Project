@@ -1,7 +1,7 @@
 import pygame
+import requests 
 import sys
 from io import BytesIO
-import requests
 
 pygame.init()
 
