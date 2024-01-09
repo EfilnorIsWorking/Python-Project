@@ -7,6 +7,7 @@ from grille import *
 from constantes import *
 from food import *
 
+#problèmes : gérer l'aspect aléatoire des clés des blobs, peut-être créer une variable qui sera incrémentée à chaque création de blob
 
 def get_cuberoot(x):
     if x < 0:
@@ -20,7 +21,7 @@ def get_cuberoot(x):
 
 class Blob(Entite):
 
-    def __init__(self, key, parent_name1, parent_name2):
+    def __init__(self, key, parent_name1, parent_name2): #initialisation des blobs
         self.energy = 100
         self.energy_max = 200
         self.perception = 0
@@ -30,22 +31,22 @@ class Blob(Entite):
 
         self.buffer_vitesse = 0.0
 
-        if (parent_name1 == None) and (parent_name2 == None):
+        if (parent_name1 == None) and (parent_name2 == None): #si le blob n'a pas de parents
             self.parent_key1 = 0
             self.parent_key2 = 0
-        else :
+        else : #si le blob a des parents
             self.parent_key1 = parent_name1
             self.parent_key2 = parent_name2
 
 
 
-        if (self.parent_key1 != 0):
+        if (self.parent_key1 != 0): #si le blob a au moins un parent
             self.vitesse = uniform(parent_name1.vitesse - mutv, parent_name1.vitesse + mutv)
             self.mass = uniform(parent_name1.mass - mutv, parent_name1.mass + mutv)
             self.perception += randint(-1, 1)
             self.x = parent_name1.x
             self.y = parent_name1.x
-        else :
+        else : #si le blob n'a pas de parents
             self.vitesse = 1
             self.mass = 1
             self.perception = 0
@@ -57,11 +58,11 @@ class Blob(Entite):
         #modifier de manière à observer ce qu'il y a dans les cases
         #move(self)
 
-    def eat(self, food):
+    def eat(self, food): #manger de la nourriture
         self.energy += food.energy
         food.has_been_eaten = True
 
-    def move(self):
+    def move(self): #déplacement des blobs
         direction = randint(0,5)
         if direction == 0 : #DOWN
             self.buffer_vitesse += self.vitesse
@@ -86,21 +87,29 @@ class Blob(Entite):
         else :
             self.energy -= 0.5 #STAY
 
-    def energyGain (self, v):
+    def energyGain (self, v): #gain d'énergie
         if (v<energy_max):
             self.energy += v
 
-    def death(self) :
+    def death(self) : #mort des blobs
         if self.energy<0 :
             self.alive = False
 
 
-def birth_parth(bobMom):
+def birth_parth(bobMom): #création d'un blob par parthénogénèse
     if bobMom.energy == energy_max :
        bob = Blob(key = 10, parent_name1 = bobMom, parent_name2 = None)
        bob.energy = 50
        bobMom.energy -= 150
        return bob
+    
+def birth(bobMom, bobDad): #création d'un blob par reproduction
+    if bobMom.energy == sex_energy_needed and bobDad.energy == sex_energy_needed :
+        bob = Blob(key = 10, parent_name1 = bobMom, parent_name2 = bobDad)
+        bob.energy = child_sex_energy
+        bobMom.energy -= parents_sex_energy
+        bobDad.energy -= parents_sex_energy
+        return bob
 
 def encounter_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la même case
     if (bob1.mass/bob2.mass) < 2/3 :
@@ -111,10 +120,9 @@ def encounter_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la m
         bob1.energy -= (1/2)*(bob2.mass/bob1.mass)*bob2.energy + (1/2)*bob2.energy
 
 
-def creer_premier_Blob():
+def create_first_Blobs(): #création des premiers blobs
     bobs = []
-    for ligne in range(taille_grille):
-        for colonne in range(taille_grille):
-            for i in nbBob:
-                bob = Blob(key=i, parent_name1=None, parent_name2=None)
-                bobs.append(bob)
+    for i in range(0, nbBob):
+        bob = Blob(key = i, parent_name1 = None, parent_name2 = None)
+        bobs.append(bob)
+    return bobs #utiliser avec grille.remplir_grille(bobs)gv

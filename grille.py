@@ -1,6 +1,5 @@
 from random import *
-
-taille_grille = 10
+from constantes import *
 
 class Grid:
     def __init__(self):
