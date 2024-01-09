@@ -1,6 +1,10 @@
 from random import *
 from constantes import *
 
+#problèmes à régler :  
+#On ne peut pas avoir plusieurs objets dans une même case
+
+
 class Grid:
     def __init__(self):
         self.lignes = taille_grille

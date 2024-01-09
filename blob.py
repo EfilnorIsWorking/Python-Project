@@ -7,7 +7,8 @@ from grille import *
 from constantes import *
 from food import *
 
-#problèmes : gérer l'aspect aléatoire des clés des blobs, peut-être créer une variable qui sera incrémentée à chaque création de blob
+
+global_key = 0 #clé différente pour chaque blob, puisque incrémentée à chaque création de blob
 
 def get_cuberoot(x):
     if x < 0:
@@ -15,7 +16,6 @@ def get_cuberoot(x):
         cube_root = pow(x, 1 / 3) * (-1)
     else:
         cube_root = pow(x, 1 / 3)
-
     return cube_root
 
 
@@ -37,8 +37,6 @@ class Blob(Entite):
         else : #si le blob a des parents
             self.parent_key1 = parent_name1
             self.parent_key2 = parent_name2
-
-
 
         if (self.parent_key1 != 0): #si le blob a au moins un parent
             self.vitesse = uniform(parent_name1.vitesse - mutv, parent_name1.vitesse + mutv)
@@ -98,20 +96,22 @@ class Blob(Entite):
 
 def birth_parth(bobMom): #création d'un blob par parthénogénèse
     if bobMom.energy == energy_max :
-       bob = Blob(key = 10, parent_name1 = bobMom, parent_name2 = None)
+       bob = Blob(global_key, parent_name1 = bobMom, parent_name2 = None)
        bob.energy = 50
        bobMom.energy -= 150
+       global_key += 1
        return bob
     
 def birth(bobMom, bobDad): #création d'un blob par reproduction
     if bobMom.energy == sex_energy_needed and bobDad.energy == sex_energy_needed :
-        bob = Blob(key = 10, parent_name1 = bobMom, parent_name2 = bobDad)
+        bob = Blob(global_key, parent_name1 = bobMom, parent_name2 = bobDad)
         bob.energy = child_sex_energy
         bobMom.energy -= parents_sex_energy
         bobDad.energy -= parents_sex_energy
+        global_key += 1
         return bob
 
-def encounter_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la même case
+def battle_of_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la même case
     if (bob1.mass/bob2.mass) < 2/3 :
         bob1.alive = False
         bob2.energy -= (1/2)*(bob1.mass/bob2.mass)*bob1.energy + (1/2)*bob1.energy
@@ -120,9 +120,11 @@ def encounter_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la m
         bob1.energy -= (1/2)*(bob2.mass/bob1.mass)*bob2.energy + (1/2)*bob2.energy
 
 
-def create_first_Blobs(): #création des premiers blobs
+def create_first_Blobs(): #création des premiers blobs après le premier tick, ils ne seront que créer par parthénogénèse/reproduction
     bobs = []
     for i in range(0, nbBob):
-        bob = Blob(key = i, parent_name1 = None, parent_name2 = None)
+        bob = Blob(global_key, parent_name1 = None, parent_name2 = None)
         bobs.append(bob)
-    return bobs #utiliser avec grille.remplir_grille(bobs)gv
+        global_key += 1
+    return bobs #utiliser avec grille.remplir_grille(bobs)
+
