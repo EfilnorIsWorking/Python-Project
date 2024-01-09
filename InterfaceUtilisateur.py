@@ -5,14 +5,14 @@ pygame.init()
 
 original_largeur, original_hauteur = 900, 450
 largeur, hauteur = original_largeur, original_hauteur
-
+image_url = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/background.jpg"
 window_surface = pygame.display.set_mode((largeur, hauteur))
 pygame.display.set_caption("The Game Of Life")
 
-original_image = pygame.image.load('![background](https://github.com/EfilnorIsWorking/Python-Project/blob/main/background.jpg?raw=true)')
+original_image = pygame.image.load(image_url)
 background = pygame.transform.scale(original_image, (largeur, hauteur))
 
-instructions_image_path = '![background](https://github.com/EfilnorIsWorking/Python-Project/blob/main/background.jpg?raw=true)'
+instructions_image_path = image_url
 instructions_image = pygame.image.load(instructions_image_path)
 instructions_image = pygame.transform.scale(instructions_image, (largeur, hauteur))
 
