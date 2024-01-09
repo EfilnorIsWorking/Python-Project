@@ -1,6 +1,6 @@
 from random import *
 
-taille_grille = 100
+taille_grille = 10
 
 class Grid:
     def __init__(self):
