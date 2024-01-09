@@ -9,7 +9,7 @@ largeur, hauteur = original_largeur, original_hauteur
 window_surface = pygame.display.set_mode((largeur, hauteur))
 pygame.display.set_caption("The Game Of Life")
 
-original_image = pygame.image.load('/home/ibighrman/PygameAssets-main/background.jpg')
+original_image = pygame.image.load('![background]()')
 background = pygame.transform.scale(original_image, (largeur, hauteur))
 
 instructions_image_path = '/home/ibighrman/PygameAssets-main/background.jpg'
