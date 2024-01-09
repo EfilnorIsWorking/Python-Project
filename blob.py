@@ -22,9 +22,9 @@ def get_cuberoot(x):
 class Blob(Entite):
 
     def __init__(self, key, parent_name1, parent_name2): #initialisation des blobs
-        self.energy = 100
-        self.energy_max = 200
-        self.perception = 0
+        self.energy = energy_normale
+        self.energy_max = energy_max
+        self.perception = perception_normale
         self.alive = True
 
         self.key = key
@@ -44,10 +44,9 @@ class Blob(Entite):
             self.perception += randint(-1, 1)
             self.x = parent_name1.x
             self.y = parent_name1.x
-        else : #si le blob n'a pas de parents
-            self.vitesse = 1
-            self.mass = 1
-            self.perception = 0
+        else : #si le blob n'a pas de parents ses options sont normales 
+            self.vitesse = vitesse_normale
+            self.mass = masse_normale
             super().__init__()
 
         self.size = get_cuberoot(self.mass)
@@ -126,5 +125,5 @@ def create_first_Blobs(): #création des premiers blobs après le premier tick, 
         bob = Blob(global_key, parent_name1 = None, parent_name2 = None)
         bobs.append(bob)
         global_key += 1
-    return bobs #utiliser avec grille.remplir_grille(bobs)
+    return bobs #renvoie une liste de blobs qui devront être modélisés dans la grille
 
