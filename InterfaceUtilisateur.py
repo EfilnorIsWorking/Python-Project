@@ -17,8 +17,10 @@ background = pygame.transform.scale(original_image, (largeur, hauteur))
 window_surface = pygame.display.set_mode((largeur, hauteur))
 pygame.display.set_caption("The Game Of Life")
 
-instructions_image_path = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/background.jpg"
-instructions_image = pygame.image.load(instructions_image_path)
+#instructions_image_path = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/background.jpg"
+response = requests.get(image_url)
+instructions_data = BytesIO(response.content)
+instructions_image = pygame.image.load(instructions_data)
 instructions_image = pygame.transform.scale(instructions_image, (largeur, hauteur))
 
 police = pygame.font.Font(None, 36)
@@ -253,4 +255,3 @@ if __name__ == "__main__":
             ajuster_positions_plein_ecran()  # Déplacez cet appel ici
         else:
             start_game()
-
