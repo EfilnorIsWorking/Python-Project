@@ -1,26 +1,19 @@
 import pygame
-import requests 
 import sys
-from io import BytesIO
 
 pygame.init()
 
 original_largeur, original_hauteur = 900, 450
 largeur, hauteur = original_largeur, original_hauteur
 
-image_url = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/background.jpg"
-response = requests.get(image_url)
-image_data = BytesIO(response.content)
-original_image = pygame.image.load(image_data)
-background = pygame.transform.scale(original_image, (largeur, hauteur))
-
 window_surface = pygame.display.set_mode((largeur, hauteur))
 pygame.display.set_caption("The Game Of Life")
 
-#instructions_image_path = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/background.jpg"
-response = requests.get(image_url)
-instructions_data = BytesIO(response.content)
-instructions_image = pygame.image.load(instructions_data)
+original_image = pygame.image.load('/home/ibighrman/PygameAssets-main/background.jpg')
+background = pygame.transform.scale(original_image, (largeur, hauteur))
+
+instructions_image_path = '/home/ibighrman/PygameAssets-main/background.jpg'
+instructions_image = pygame.image.load(instructions_image_path)
 instructions_image = pygame.transform.scale(instructions_image, (largeur, hauteur))
 
 police = pygame.font.Font(None, 36)
@@ -35,8 +28,8 @@ vert = (164, 205, 50)
 capacite_bob = 1
 luminosite = 1.0
 
-musique = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/start.mp3"
-mario = "https://github.com/EfilnorIsWorking/Python-Project/raw/main/git/mario.mp3"
+musique = "/home/ibighrman/projet_python/start.mp3"
+mario = "/home/ibighrman/projet_python/mario.mp3"
 
 fullscreen = False
 
@@ -87,7 +80,7 @@ def stopper_toutes_musiques():
     pygame.mixer.music.stop()
 
 def rejouer_toutes_musiques():
-    pygame.mixer.music.load(BytesIO(requests.get(mario).content))
+    pygame.mixer.music.load(mario)
     pygame.mixer.music.play(-1)
 
 def toggle_musique():
@@ -96,7 +89,7 @@ def toggle_musique():
     else:
         rejouer_toutes_musiques()
 
-pygame.mixer.music.load(BytesIO(requests.get(mario).content))
+pygame.mixer.music.load(mario)
 pygame.mixer.music.play(-1)
 
 def main_menu():
@@ -228,7 +221,7 @@ def modifier_capacite_bob():
 
 def start_game():
     pygame.mixer.music.stop()
-    pygame.mixer.music.load(BytesIO(requests.get(musique).content))
+    pygame.mixer.music.load(musique)
     pygame.mixer.music.play(-1)
     
     jeu_en_cours = True
@@ -255,3 +248,4 @@ if __name__ == "__main__":
             ajuster_positions_plein_ecran()  # Déplacez cet appel ici
         else:
             start_game()
+
