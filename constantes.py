@@ -11,7 +11,7 @@ masse_normale = 1 #Masse normale d'un Bob avant mutation
 perception_normale = 0 #Perception normale d'un Bob avant mutation
 
 energy_food = 100 #Energie donnée par une portion de nourriture
-quantity_food = 20 #Quantité de nourriture qui apparaît sur la map
+quantity_food = 5 #Quantité de nourriture qui apparaît sur la map
 
 mutv = 0.1 #Coefficient de mutation
-taille_grille = 100 #Taille de la grille
+taille_grille = 10 #Taille de la grille

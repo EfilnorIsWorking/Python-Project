@@ -64,29 +64,33 @@ class Blob(Entite):
         if direction == 0 : #DOWN
             self.buffer_vitesse += self.vitesse
             self.y += int(self.buffer_vitesse)
+            if (self.y > taille_grille-1):
+                self.y = taille_grille-1
             self.energy -= self.vitesse*self.vitesse
             self.buffer_vitesse -= int(self.buffer_vitesse)
 
         elif direction == 1 :   #UP
             self.buffer_vitesse += self.vitesse
             self.y -= int(self.buffer_vitesse)
+            if (self.y < 0):
+                self.y = 0
             self.energy -= self.vitesse*self.vitesse*self.mass
 
         elif direction == 2 :   #RIGHT
             self.buffer_vitesse += self.vitesse
             self.x += int(self.buffer_vitesse)
+            if (self.x > taille_grille-1):
+                self.x = taille_grille-1
             self.energy -= self.vitesse*self.vitesse*self.mass
 
         elif direction == 3:    #LEFT
             self.buffer_vitesse += self.vitesse
             self.x -= int(self.buffer_vitesse)
+            if (self.x < 0):
+                self.x = 0
             self.energy -= self.vitesse*self.vitesse*self.mass
         else :
             self.energy -= 0.5 #STAY
-
-    def energyGain (self, v): #gain d'énergie
-        if (v<energy_max):
-            self.energy += v
 
     def death(self) : #mort des blobs
         if self.energy<0 :
@@ -120,6 +124,7 @@ def battle_of_bobs(bob1, bob2): #se lance que lorsque Bob1 et Bob2 sont sur la m
 
 
 def create_first_Blobs(): #création des premiers blobs après le premier tick, ils ne seront que créer par parthénogénèse/reproduction
+    global global_key
     bobs = []
     for i in range(0, nbBob):
         bob = Blob(global_key, parent_name1 = None, parent_name2 = None)
