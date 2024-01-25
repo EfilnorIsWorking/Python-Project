@@ -215,7 +215,8 @@ class Bob:
             if distX > -self.perception and distX < self.perception:
                 if distY > -self.perception and distY < self.perception:
                     foods.append(food)
-
+         for food in foods:
+            foods.sort(key=lambda x: x.energyGive, reverse=True)
         return foods
 
     def get_hunter_targets(self):
