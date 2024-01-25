@@ -1,7 +1,18 @@
 import pygame
 import sys
+#import os
+#os.chdir("/home/adeleris/Desktop")
+
 
 pygame.init()
+
+nbBob = 10
+D = 100
+energy_max = 200
+energy_food = 100
+quantity_food = 20
+mutv = 0.1
+taille_grille = 10
 
 original_largeur, original_hauteur = 900, 450
 largeur, hauteur = original_largeur, original_hauteur
@@ -16,16 +27,17 @@ instructions_image_path = 'background.jpg'
 instructions_image = pygame.image.load(instructions_image_path)
 instructions_image = pygame.transform.scale(instructions_image, (largeur, hauteur))
 
+
 police = pygame.font.Font(None, 36)
 
 noir = (0, 0, 0)
 blanc = (255, 255, 255)
-gris = (128, 128, 128)
-violet = (122, 55, 139)
 bleu = (92, 172, 238)
 vert = (164, 205, 50)
+violet = (122, 55, 139)
+gris = (128, 128, 128)
 
-capacite_bob = 1
+capacite_bob = 1  # valeur de base de la capacité du bob, à modifier
 luminosite = 1.0
 
 musique = "start.mp3"
@@ -54,7 +66,6 @@ def ajuster_positions_plein_ecran():
     bouton_hauteur = 40
     bouton_y = hauteur // 2 - bouton_hauteur // 2
 
-    
     pygame.display.update()
 
 def toggle_fullscreen():
@@ -67,14 +78,13 @@ def toggle_fullscreen():
         largeur, hauteur = original_largeur, original_hauteur
         pygame.display.set_mode((largeur, hauteur))
 
-    pygame.display.update()  # Mettez à jour la fenêtre avant d'ajuster les positions en mode plein écran
+    pygame.display.update()
     ajuster_positions_plein_ecran()
 
 def gerer_redimensionnement(event):
     global largeur, hauteur
     largeur, hauteur = event.w, event.h
     ajuster_positions_plein_ecran()
-
 
 def stopper_toutes_musiques():
     pygame.mixer.music.stop()
@@ -91,6 +101,7 @@ def toggle_musique():
 
 pygame.mixer.music.load(mario)
 pygame.mixer.music.play(-1)
+
 
 def main_menu():
     while True:
@@ -134,7 +145,22 @@ def main_menu():
         afficher_texte("Musique", int(largeur * 0.84), int(hauteur * 0.19))
         pygame.display.update()
 
+def handle_button_action(button):
+    action = button["action"]
+    if action == "start_game":
+        return "start_game"
+    elif action == "options_menu":
+        return "options_menu"
+    elif action == "quit":
+        pygame.quit()
+        sys.exit()
 
+def handle_ellipse_action(ellipse):
+    action = ellipse["action"]
+    if action == "toggle_fullscreen":
+        toggle_fullscreen()
+    elif action == "toggle_music":
+        toggle_musique()
 
 def afficher_instructions():
     instruction_text = [
@@ -170,6 +196,10 @@ def afficher_instructions():
 
 def options_menu():
     global luminosite, capacite_bob
+    capacite_bob_input_rect = pygame.Rect(largeur * 0.33, hauteur * 0.44, largeur * 0.34, hauteur * 0.09)
+    capacite_bob_input_active = False
+    capacite_bob_input_text = ''
+
     options_menu_open = True
     while options_menu_open:
         for event in pygame.event.get():
@@ -178,30 +208,43 @@ def options_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
-                norm_x = x / largeur
-                norm_y = y / hauteur
+                norm_x, norm_y = x / largeur, y / hauteur
 
                 if 0.33 <= norm_x <= 0.67:
                     if 0.44 <= norm_y <= 0.53:
-                        modifier_capacite_bob()
+                        capacite_bob_input_active = not capacite_bob_input_active
                     elif 0.56 <= norm_y <= 0.65:
-                        augmenter_luminosite()
+                        luminosite += 0.1
                     elif 0.67 <= norm_y <= 0.76:
-                        diminuer_luminosite()
+                        luminosite -= 0.1
                     elif 0.78 <= norm_y <= 0.87:
                         options_menu_open = False
-                   
+            elif event.type == pygame.KEYDOWN:
+                if capacite_bob_input_active:
+                    if event.key == pygame.K_RETURN:
+                        try:
+                            capacite_bob = int(capacite_bob_input_text)
+                        except ValueError:
+                            print("Veuillez entrer une valeur numérique pour la capacité de Bob.")
+                        capacite_bob_input_active = False
+                        capacite_bob_input_text = ''
+                    elif event.key == pygame.K_BACKSPACE:
+                        capacite_bob_input_text = capacite_bob_input_text[:-1]
+                    else:
+                        capacite_bob_input_text += event.unicode
+
         window_surface.fill((0, 0, 0))
-        window_surface.blit(background, (0, 0))
+        window_surface.blit(original_image, (0, 0))
         afficher_texte("OPTIONS", largeur // 2, 100)
-        pygame.draw.rect(window_surface, vert, (largeur * 0.33, hauteur * 0.44, largeur * 0.34, hauteur * 0.09))
-        afficher_texte("Augmenter Capacité", largeur // 2, int(hauteur * 0.48))
+        pygame.draw.rect(window_surface, bleu, capacite_bob_input_rect)
+        afficher_texte("Capacité Bob: " + capacite_bob_input_text, largeur // 2, int(hauteur * 0.48))
         pygame.draw.rect(window_surface, bleu, (largeur * 0.33, hauteur * 0.56, largeur * 0.34, hauteur * 0.09))
         afficher_texte("Augmenter Luminosité", largeur // 2, int(hauteur * 0.60))
         pygame.draw.rect(window_surface, bleu, (largeur * 0.33, hauteur * 0.67, largeur * 0.34, hauteur * 0.09))
         afficher_texte("Diminuer Luminosité", largeur // 2, int(hauteur * 0.71))
         pygame.draw.rect(window_surface, violet, (largeur * 0.33, hauteur * 0.78, largeur * 0.34, hauteur * 0.09))
         afficher_texte("Retour", largeur // 2, int(hauteur * 0.82))
+
         pygame.display.update()
 
 
@@ -217,7 +260,34 @@ def diminuer_luminosite():
 
 def modifier_capacite_bob():
     global capacite_bob
-    capacite_bob += 1
+    capacite_bob_input = ""
+
+    while True:
+        window_surface.fill((0, 0, 0))
+        window_surface.blit(original_image, (0, 0))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    try:
+                        capacite_bob = int(capacite_bob_input)
+                        print(f"La capacité du bob a été modifiée avec succès. Nouvelle valeur : {capacite_bob}")
+                        return
+                    except ValueError:
+                        print("Erreur : Veuillez entrer une valeur numérique pour la capacité de Bob.")
+                elif event.key == pygame.K_BACKSPACE:
+                    capacite_bob_input = capacite_bob_input[:-1]
+                else:
+                    capacite_bob_input += event.unicode
+
+        afficher_texte("Modifier Capacité Bob:", largeur // 2, hauteur // 3)
+        afficher_texte(capacite_bob_input, largeur // 2, hauteur // 2)
+
+        pygame.display.update()
+
 
 def start_game():
     pygame.mixer.music.stop()
@@ -244,8 +314,9 @@ if __name__ == "__main__":
                 start_game()
             elif action == "options_menu":
                 options_menu()
-            
+            elif action == "modify_capacity":
+                modifier_capacite_bob()
+
             ajuster_positions_plein_ecran()  # Déplacez cet appel ici
         else:
             start_game()
-
