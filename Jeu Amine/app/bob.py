@@ -100,7 +100,7 @@ class Bob:
 
     def random_genetics(self):
         self.velocity = random.randint(8, 20)/10
-        self.mass = random.randint(1, 2)/10
+        self.mass = random.randint(1, 2)/2 #ça dépend de la taille du Bob que vous voulez
         self.perception = random.randint(0, 18)
 
         self.load_images()
