@@ -1,6 +1,6 @@
 import pygame
 import sys
-
+from pygame.locals import KEYDOWN, K_ESCAPE, K_RETURN, K_BACKSPACE
 pygame.init()
 
 original_largeur, original_hauteur = 900, 450
@@ -41,6 +41,79 @@ def afficher_texte(texte, x, y):
     texte_rect = texte_surface.get_rect()
     texte_rect.center = (x, y)
     window_surface.blit(texte_surface, texte_rect)
+
+# ...
+
+def afficher_formulaire():
+    labels = ["Nombre de bobs", "Energie bob", "Nombre de tick", "Vitesse initiale du bob", "Energie min perdue par tick"]
+    valeurs = [0, 0, 0, 0, 0]
+
+    font = pygame.font.Font(None, 36)
+    input_rects = []
+    color_active = pygame.Color('dodgerblue2')
+    color_inactive = pygame.Color('lightskyblue3')
+    colors = [color_inactive, color_inactive, color_inactive, color_inactive, color_inactive]
+    active = [False, False, False, False, False]
+    texts = ["", "", "", "", ""]
+    current_index = 0
+
+    save_button_rect = pygame.Rect(largeur * 0.75, hauteur * 0.80, largeur * 0.22, hauteur * 0.09)
+
+    for i in range(len(labels)):
+        input_rects.append(pygame.Rect(largeur * 0.4, hauteur * (0.49 + 0.1 * i), largeur * 0.2, hauteur * 0.05))
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for i in range(len(labels)):
+                    if input_rects[i].collidepoint(event.pos):
+                        active[i] = not active[i]
+                        current_index = i
+                    else:
+                        active[i] = False
+
+                if save_button_rect.collidepoint(event.pos):
+                    # Save the values entered by the user
+                    valeurs = [int(texts[i].strip()) if texts[i].strip().isdigit() else 0 for i in range(len(texts))]
+            elif event.type == KEYDOWN:
+                if any(active):
+                    if event.key == K_RETURN:
+                        valeurs[current_index] = int(texts[current_index].strip()) if texts[current_index].strip().isdigit() else 0
+                        active[current_index] = False
+                    elif event.key == K_BACKSPACE:
+                        texts[current_index] = texts[current_index][:-1]
+                    else:
+                        texts[current_index] += event.unicode
+
+                elif event.key == K_ESCAPE:
+                    return
+
+        window_surface.fill((0, 0, 0))
+        window_surface.blit(background, (0, 0))
+        afficher_texte("OPTIONS", largeur // 2, 100)
+
+        for i in range(len(labels)):
+            pygame.draw.rect(window_surface, colors[i], input_rects[i], 2)
+
+            label_surface = font.render(f"{labels[i]}:", True, blanc)
+            label_rect = label_surface.get_rect(topleft=(input_rects[i].x - label_surface.get_width() - 10, input_rects[i].centery - label_surface.get_height() // 2))
+            window_surface.blit(label_surface, label_rect)
+
+            txt_surface = font.render(texts[i] if active[i] else str(valeurs[i]), True, noir)
+            width = max(200, txt_surface.get_width() + 10)
+            input_rects[i].w = width
+            window_surface.blit(txt_surface, (input_rects[i].x + 5, input_rects[i].y + 5))
+            pygame.draw.rect(window_surface, colors[i], input_rects[i], 2)
+
+        # Draw and display the "Save" button
+        pygame.draw.rect(window_surface, violet, save_button_rect)
+        afficher_texte("Save", largeur * 0.85, int(hauteur * 0.85))
+
+        pygame.display.flip()
+
 
 def ajuster_positions_plein_ecran():
     global largeur, hauteur, background, instructions_image, bouton_luminosite_rect
@@ -245,18 +318,32 @@ def options_menu():
                 norm_y = y / hauteur
 
                 if 0.33 <= norm_x <= 0.67:
-                    if 0.44 <= norm_y <= 0.53:
-                        modifier_capacite_bob()
-                    elif 0.78 <= norm_y <= 0.87:
+                    if 0.78 <= norm_y <= 0.87:
                         options_menu_open = False
-                   
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                return  # Retour au menu principal
+
         window_surface.fill((0, 0, 0))
         window_surface.blit(background, (0, 0))
         afficher_texte("OPTIONS", largeur // 2, 100)
-        pygame.draw.rect(window_surface, vert, (largeur * 0.33, hauteur * 0.44, largeur * 0.34, hauteur * 0.09))
-        afficher_texte("Augmenter Capacité", largeur // 2, int(hauteur * 0.48))
+        afficher_formulaire()  # Appelez la fonction pour afficher le formulaire
         pygame.draw.rect(window_surface, violet, (largeur * 0.33, hauteur * 0.78, largeur * 0.34, hauteur * 0.09))
         afficher_texte("Retour", largeur // 2, int(hauteur * 0.82))
+        pygame.display.update()
+
+def start_game():
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load(musique)
+    pygame.mixer.music.play(-1)
+    
+    jeu_en_cours = True
+    while jeu_en_cours:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        window_surface.fill((0, 0, 0))
+        afficher_texte("Le jeu a commencé", largeur // 2, hauteur // 2 - 50)
         pygame.display.update()
 
 if __name__ == "__main__":
@@ -271,7 +358,7 @@ if __name__ == "__main__":
                 options_menu()
             elif action == "luminosite_menu":
                 menu_luminosite()
-            
-            ajuster_positions_plein_ecran()  # Déplacez cet appel ici
         else:
             start_game()
+
+        ajuster_positions_plein_ecran()  # Déplacez cet appel ici
