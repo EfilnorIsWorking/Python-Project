@@ -1,7 +1,7 @@
 import pygame
 import sys
-#import os
-#os.chdir("/home/adeleris/Desktop")
+import os
+os.chdir("/home/adeleris/Desktop")
 
 
 pygame.init()
@@ -17,6 +17,9 @@ taille_grille = 10
 original_largeur, original_hauteur = 900, 450
 largeur, hauteur = original_largeur, original_hauteur
 
+police = pygame.font.Font('police.ttf', 36)  
+
+
 window_surface = pygame.display.set_mode((largeur, hauteur))
 pygame.display.set_caption("The Game Of Life")
 
@@ -28,7 +31,7 @@ instructions_image = pygame.image.load(instructions_image_path)
 instructions_image = pygame.transform.scale(instructions_image, (largeur, hauteur))
 
 
-police = pygame.font.Font(None, 36)
+police_titre = pygame.font.Font(None, 40)
 
 noir = (0, 0, 0)
 blanc = (255, 255, 255)
@@ -81,6 +84,14 @@ def toggle_fullscreen():
     pygame.display.update()
     ajuster_positions_plein_ecran()
 
+
+def afficher_bouton_retour():
+    bouton_retour_rect = pygame.Rect(largeur * 0.75, hauteur * 0.85, largeur * 0.19, hauteur * 0.09)
+    pygame.draw.rect(window_surface, violet, bouton_retour_rect)
+    afficher_texte("Retour", int(largeur * 0.84), int(hauteur * 0.89))
+    return bouton_retour_rect, "return_to_main_menu"
+
+
 def gerer_redimensionnement(event):
     global largeur, hauteur
     largeur, hauteur = event.w, event.h
@@ -132,17 +143,23 @@ def main_menu():
 
         window_surface.fill((0, 0, 0))
         window_surface.blit(background, (0, 0))
-        afficher_texte("GAME OF LIFE", largeur // 2, 100)
+
+        title_surface = police.render("GAME OF LIFE", True, blanc)
+        title_rect = title_surface.get_rect(center=(largeur // 2, 100))
+        window_surface.blit(title_surface, title_rect)
+
         pygame.draw.rect(window_surface, bleu, (largeur * 0.39, hauteur * 0.44, largeur * 0.22, hauteur * 0.09))
-        afficher_texte("Démarrer", largeur // 2, int(hauteur * 0.48))
+        afficher_texte("Start", largeur // 2, int(hauteur * 0.48))
         pygame.draw.rect(window_surface, vert, (largeur * 0.39, hauteur * 0.57, largeur * 0.22, hauteur * 0.09))
         afficher_texte("Options", largeur // 2, int(hauteur * 0.61))
         pygame.draw.rect(window_surface, violet, (largeur * 0.39, hauteur * 0.69, largeur * 0.22, hauteur * 0.09))
-        afficher_texte("Quitter", largeur // 2, int(hauteur * 0.73))
+        afficher_texte("Quit", largeur // 2, int(hauteur * 0.73))
         pygame.draw.ellipse(window_surface, vert, (largeur * 0.75, hauteur * 0.02, largeur * 0.19, hauteur * 0.1))
-        afficher_texte("Plein écran", int(largeur * 0.84), int(hauteur * 0.07))
+        afficher_texte("full screen", int(largeur * 0.84), int(hauteur * 0.07))
         pygame.draw.ellipse(window_surface, vert, (largeur * 0.75, hauteur * 0.14, largeur * 0.19, hauteur * 0.1))
-        afficher_texte("Musique", int(largeur * 0.84), int(hauteur * 0.19))
+        afficher_texte("music", int(largeur * 0.84), int(hauteur * 0.19))
+
+
         pygame.display.update()
 
 def handle_button_action(button):
@@ -172,7 +189,6 @@ def afficher_instructions():
     ]
 
     instruction_font = pygame.font.Font(None, 24)
-
     instruction_screen = pygame.display.set_mode((largeur, hauteur))
     instruction_screen.blit(instructions_image, (0, 0))
 
@@ -183,6 +199,7 @@ def afficher_instructions():
         instruction_screen.blit(instruction_surface, instruction_rect)
         y_offset += 30
 
+    bouton_retour_rect, retour_action = afficher_bouton_retour()
     pygame.display.flip()
 
     waiting_for_escape = True
@@ -193,6 +210,13 @@ def afficher_instructions():
                 sys.exit()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 waiting_for_escape = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if bouton_retour_rect.collidepoint(event.pos):
+                    return retour_action
+
+    window_surface.fill((0, 0, 0))
+    window_surface.blit(background, (0, 0))
+    pygame.display.update()
 
 def options_menu():
     global luminosite, capacite_bob
@@ -243,7 +267,7 @@ def options_menu():
         pygame.draw.rect(window_surface, bleu, (largeur * 0.33, hauteur * 0.67, largeur * 0.34, hauteur * 0.09))
         afficher_texte("Diminuer Luminosité", largeur // 2, int(hauteur * 0.71))
         pygame.draw.rect(window_surface, violet, (largeur * 0.33, hauteur * 0.78, largeur * 0.34, hauteur * 0.09))
-        afficher_texte("Retour", largeur // 2, int(hauteur * 0.82))
+        afficher_texte("Return", largeur // 2, int(hauteur * 0.82))
 
         pygame.display.update()
 
@@ -316,7 +340,7 @@ if __name__ == "__main__":
                 options_menu()
             elif action == "modify_capacity":
                 modifier_capacite_bob()
-
-            ajuster_positions_plein_ecran()  # Déplacez cet appel ici
+            elif action == "return_to_main_menu":
+                ajuster_positions_plein_ecran()  # Déplacez cet appel ici
         else:
             start_game()
