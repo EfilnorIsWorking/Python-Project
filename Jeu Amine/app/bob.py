@@ -7,15 +7,6 @@ from app.image import Image
 
 from app.gui import *
 
-
-# function to clamp float
-def clamp(a, mi, ma):
-    if a <= mi:
-        a = mi
-    if a >= ma:
-        a = ma
-    return a
-
 class BobGUI(GUI):
     def __init__(self, game, bob):
         super().__init__(game)
@@ -62,11 +53,14 @@ class BobGUI(GUI):
 
 # bob entity class
 class Bob:
+    mutv = 0.1
     def __init__(self, game, x, y, generateRandomGenetics=True):
         self.game = game
+        # position
         self.x = x
         self.y = y
-
+        
+        # size
         self.w = 48
         self.h = 48
 
@@ -95,6 +89,8 @@ class Bob:
         # init
         self.init_gui()
         self.init()
+
+
 
     def load_images(self):
         bobImage = "bob.png"
@@ -206,7 +202,9 @@ class Bob:
             if distX > -self.perception and distX < self.perception:
                 if distY > -self.perception and distY < self.perception:
                     foods.append(food)
+
         foods.sort(key=lambda x: x.energyGive, reverse=True)
+
         return foods
 
     def get_hunter_targets(self):
@@ -317,33 +315,56 @@ class Bob:
     def reproduce(self):
         if not self.game.parthenoRepr: return
         if self.dead: return
-
-        newBob = Bob(self.game, self.x, self.y)
-        newBob.energy = 50
-        newBob.newborn = True
-        newBob.init()
-
-        self.energy -= 150
-
-        self.game.tilemap.bobs.append(newBob)
+        if not self.game.mutation: 
+            if self.energy == 200 : 
+                newBob = Bob(self.game, self.x, self.y)
+                newBob.energy = 50
+                newBob.newborn = True
+                newBob.init()
+                self.game.tilemap.bobs.append(newBob)
+                self.energy -= 150
+        else : 
+            if self.energy == 200 : 
+                newBob = Bob(self.game, self.x, self.y)
+                newBob.energy = 50
+                newBob.newborn = True
+                newBob.velocity = random.uniform(self.velocity - 0.1, self.velocity + 0.1)
+                newBob.init()
+                self.game.tilemap.bobs.append(newBob)
+                self.energy -= 150
+        
 
     def reproduce_bob(self, bob):
         if not self.game.sexualRepr: return
         if self.dead: return
+        if not self.game.mutation:
+            if self.energy >= 150 and bob.energy >= 150:
+                newBob = Bob(self.game, self.x, self.y, False)
+                newBob.energy = 100
+                newBob.velocity = (bob.velocity + self.velocity) / 2
+                newBob.mass = (bob.mass + self.mass) // 2
+                newBob.perception = (bob.perception + self.perception) // 2
+                newBob.newborn = True
+                newBob.init()
 
-        if self.energy >= 150 and bob.energy >= 150:
-            newBob = Bob(self.game, self.x, self.y, False)
-            newBob.energy = 100
-            newBob.velocity = (bob.velocity + self.velocity) / 2
-            newBob.mass = (bob.mass + self.mass) // 2
-            newBob.perception = (bob.perception + self.perception) // 2
-            newBob.newborn = True
-            newBob.init()
+                self.energy -= 100
+                bob.energy -= 100
 
-            self.energy -= 100
-            bob.energy -= 100
+                self.game.tilemap.bobs.append(newBob)
+        else :
+            if self.energy >= 150 and bob.energy >= 150:
+                newBob = Bob(self.game, self.x, self.y, False)
+                newBob.energy = 100
+                newBob.velocity = random.uniform((bob.velocity + self.velocity) / 2 - 0.1, (bob.velocity + self.velocity) / 2 + 0.1)
+                newBob.mass = (bob.mass + self.mass) // 2
+                newBob.perception = (bob.perception + self.perception) // 2
+                newBob.newborn = True
+                newBob.init()
 
-            self.game.tilemap.bobs.append(newBob)
+                self.energy -= 100
+                bob.energy -= 100
+
+                self.game.tilemap.bobs.append(newBob)
 
     def update(self):
         if self.despawned: return
