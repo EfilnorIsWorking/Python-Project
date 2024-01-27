@@ -451,7 +451,7 @@ def main_menu():
                 elif 0.75 <= norm_x <= 0.94 and 0.32 <= norm_y <= 0.42:
                     rejouer_toutes_musiques()
                 elif bouton_luminosite_rect.collidepoint(x, y):  # Vérifier si le bouton "Luminosité" est cliqué
-                    return "luminosite_menu"
+                    menu_luminosite()
 
         window_surface.fill((0, 0, 0))
         window_surface.blit(background, (0, 0))
@@ -543,19 +543,14 @@ def start_game():
                 norm_x = x / largeur
                 norm_y = y / hauteur
 
-                # Ajout du mini-bouton "Retour au menu principal"
-                if 0.75 <= norm_x <= 0.89 and 0.02 <= norm_y <= 0.09:
-                    pygame.mixer.music.stop() 
-                    rejouer_toutes_musiques()
-                    main_menu()
+                
                     
                 
 
         window_surface.fill((0, 0, 0))
         afficher_texte("Le jeu a commencé", largeur // 2, hauteur // 2 - 50)
 
-        pygame.draw.ellipse(window_surface, vert, (largeur * 0.75, hauteur * 0.02, largeur * 0.14, hauteur * 0.07))
-        afficher_texte("Menu", int(largeur * 0.82), int(hauteur * 0.06))
+    
         pygame.display.update()
 
 if __name__ == "__main__":
