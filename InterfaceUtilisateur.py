@@ -3,7 +3,7 @@ import sys
 import os 
 from pygame.locals import KEYDOWN, K_ESCAPE, K_RETURN, K_BACKSPACE
 pygame.init()
-os.chdir("/home/adeleris/Desktop")
+#os.chdir("/home/adeleris/Desktop")
 
 original_largeur, original_hauteur = 900, 450
 largeur, hauteur = original_largeur, original_hauteur
@@ -327,6 +327,7 @@ def ajuster_positions_plein_ecran():
     bouton_hauteur = 40
     bouton_y = hauteur // 2 - bouton_hauteur // 2
     
+    pygame.display.set_mode((largeur, hauteur), pygame.FULLSCREEN if fullscreen else 0)
     pygame.display.update()
 
 def toggle_fullscreen():
@@ -408,6 +409,7 @@ def menu_luminosite():
         pygame.draw.rect(window_surface, violet, (largeur * 0.33, hauteur * 0.78, largeur * 0.34, hauteur * 0.09))
         afficher_texte("Retour", largeur // 2, int(hauteur * 0.82))
         pygame.display.update()
+
 
 def augmenter_luminosite():
     global luminosite
