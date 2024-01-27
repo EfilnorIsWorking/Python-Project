@@ -93,17 +93,8 @@ class Bob:
         self.rect = pygame.Rect(0, 0, 48, 48)
 
         # init
-        if generateRandomGenetics:
-            self.random_genetics()
         self.init_gui()
         self.init()
-
-    def random_genetics(self):
-        self.velocity = random.randint(8, 20)/10
-        self.mass = random.randint(4, 25)/10
-        self.perception = random.randint(3, 18)
-
-        self.load_images()
 
     def load_images(self):
         bobImage = "bob.png"
