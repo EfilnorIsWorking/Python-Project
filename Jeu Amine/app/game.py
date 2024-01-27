@@ -103,6 +103,7 @@ class Game:
         self.renderingEnabled = True
         self.parthenoRepr = True
         self.sexualRepr = True
+        self.mutation = True #TODO : implement the mutation in the menu
 
         # day and night cycle
         self.dayNightTimer = Timer(self, self.dayLength//2, self.switch_day_night, True)
