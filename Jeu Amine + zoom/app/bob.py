@@ -7,15 +7,6 @@ from app.image import Image
 
 from app.gui import *
 
-
-# function to clamp float
-def clamp(a, mi, ma):
-    if a <= mi:
-        a = mi
-    if a >= ma:
-        a = ma
-    return a
-
 class BobGUI(GUI):
     def __init__(self, game, bob):
         super().__init__(game)
@@ -33,13 +24,10 @@ class BobGUI(GUI):
         self.visible = False
 
     def update(self):
-        # check if it should be visible (if mouse hovers over bob)
         if self.visible:
             if self.game.menuGUI.frmMenu.active:
                 self.visible = False
         mx, my = pygame.mouse.get_pos()
-        mx /= self.game.camera.zoom
-        my /= self.game.camera.zoom
         if not pygame.Rect(mx-75, my-75, 150, 150).colliderect(self.bob.rect):
             self.visible = False
 
@@ -47,33 +35,32 @@ class BobGUI(GUI):
             self.visible = False
 
         # set position
-        self.set_position(self.bob.get_position()[0]*self.game.camera.zoom, self.bob.get_position()[1]*self.game.camera.zoom)
+        self.set_position(self.bob.get_position()[0], self.bob.get_position()[1])
 
         # rendering
         self.draw_element(self.frame)
         self.draw_element(self.entity)
 
-        # set the text with the right variables
         self.energy.set_text(f"Energy: {int(self.bob.energy)}/{self.bob.maxEnergy}")
         self.velocity.set_text(f"Velocity: {self.bob.velocity}")
         self.mass.set_text(f"Mass: {self.bob.mass}")
         self.perc.set_text(f"Perception: {self.bob.perception}")
-
-        # draw the text
         self.draw_element(self.velocity)
         self.draw_element(self.mass)
         self.draw_element(self.energy)
         self.draw_element(self.perc)
 
 
-
 # bob entity class
 class Bob:
+    mutv = 0.1
     def __init__(self, game, x, y, generateRandomGenetics=True):
         self.game = game
+        # position
         self.x = x
         self.y = y
-
+        
+        # size
         self.w = 48
         self.h = 48
 
@@ -100,17 +87,10 @@ class Bob:
         self.rect = pygame.Rect(0, 0, 48, 48)
 
         # init
-        if generateRandomGenetics:
-            self.random_genetics()
         self.init_gui()
         self.init()
 
-    def random_genetics(self):
-        self.velocity = random.randint(8, 20)/10
-        self.mass = random.randint(4, 25)/10
-        self.perception = random.randint(3, 18)
 
-        self.load_images()
 
     def load_images(self):
         bobImage = "bob.png"
@@ -223,6 +203,8 @@ class Bob:
                 if distY > -self.perception and distY < self.perception:
                     foods.append(food)
 
+        foods.sort(key=lambda x: x.energyGive, reverse=True)
+
         return foods
 
     def get_hunter_targets(self):
@@ -333,26 +315,38 @@ class Bob:
     def reproduce(self):
         if not self.game.parthenoRepr: return
         if self.dead: return
-
         newBob = Bob(self.game, self.x, self.y)
         newBob.energy = 50
         newBob.newborn = True
+        newBob.perception = self.perception + random.choice([-1, 0, 1])
+        newBob.velocity = self.velocity
+        newBob.mass = self.mass
+
+        if self.game.mutation: 
+            newBob.velocity = random.uniform(self.velocity - 0.1, self.velocity + 0.1)
+            newBob.mass = random.uniform(self.mass - 0.1, self.mass + 0.1)
+        
         newBob.init()
-
-        self.energy -= 150
-
         self.game.tilemap.bobs.append(newBob)
+        self.energy -= 150
+        
 
     def reproduce_bob(self, bob):
         if not self.game.sexualRepr: return
         if self.dead: return
-
+        
         if self.energy >= 150 and bob.energy >= 150:
             newBob = Bob(self.game, self.x, self.y, False)
             newBob.energy = 100
-            newBob.velocity = (bob.velocity + self.velocity) / 2
-            newBob.mass = (bob.mass + self.mass) // 2
-            newBob.perception = (bob.perception + self.perception) // 2
+
+            if not self.game.mutation:
+                newBob.velocity = (bob.velocity + self.velocity) / 2
+                newBob.mass = (bob.mass + self.mass) / 2
+            else : 
+                newBob.velocity = random.uniform((bob.velocity + self.velocity) / 2 - 0.1, (bob.velocity + self.velocity) / 2 + 0.1)
+                newBob.mass = random.uniform((bob.mass + self.mass) / 2 - 0.1, (bob.mass + self.mass) / 2 + 0.1)
+            
+            newBob.perception = (bob.perception + self.perception) / 2 + random.choice([-1, 0, 1])
             newBob.newborn = True
             newBob.init()
 
