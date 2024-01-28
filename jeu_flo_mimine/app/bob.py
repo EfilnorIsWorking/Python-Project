@@ -184,14 +184,24 @@ class Bob:
             self.totalMoveY += 1 / (self.speed / self.game.tickSpeedMult)
 
         # update of the memory tiles    
-        if len(self.memoryTiles) >= 2*self.memory and self.memoryTiles != [] and (self.memory != 0):
-            food_coordinates = self.memoryTiles.pop(0)
-            for food in self.game.tilemap.foods:
-                if food.x == food_coordinates[0] and food.y == food_coordinates[1]:
-                    self.foodMemory.append(food)
-                    self.foodmem += 1
-                    self.memory -=1
-                    break
+        if len(self.memoryTiles) == 2 * self.memory and self.memory != 0:
+        # Calculate the range of indices to remove based on Bob's current direction
+            start_index = 0
+            end_index = 0
+            if self.totalMoveX > 0:
+                start_index = 0
+                end_index = int(self.totalMoveX * self.memory)
+            elif self.totalMoveX < 0:
+                start_index = int(-self.totalMoveX * self.memory)
+                end_index = len(self.memoryTiles)
+            elif self.totalMoveY > 0:
+                start_index = 0
+                end_index = int(self.totalMoveY * self.memory)
+            elif self.totalMoveY < 0:
+                start_index = int(-self.totalMoveY * self.memory)
+                end_index = len(self.memoryTiles)
+            # Remove the coordinates from memoryTiles
+            del self.memoryTiles[start_index:end_index]
 
         self.memoryTiles.append([self.x, self.y])
 
