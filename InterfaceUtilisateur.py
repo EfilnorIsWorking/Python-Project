@@ -27,7 +27,7 @@ violet = (122, 55, 139)
 bleu = (92, 172, 238)
 vert = (164, 205, 50)
 
-capacite_bob = 1
+
 luminosite = 1.0
 
 musique = "start.mp3"
