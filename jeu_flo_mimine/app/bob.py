@@ -184,7 +184,7 @@ class Bob:
             self.totalMoveY += 1 / (self.speed / self.game.tickSpeedMult)
 
         # update of the memory tiles    
-        if len(self.memoryTiles) >= 2*self.memory and (self.memory != 0):
+        if len(self.memoryTiles) >= 2*self.memory and self.memoryTiles != [] and (self.memory != 0):
             food_coordinates = self.memoryTiles.pop(0)
             for food in self.game.tilemap.foods:
                 if food.x == food_coordinates[0] and food.y == food_coordinates[1]:
