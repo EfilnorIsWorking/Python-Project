@@ -183,27 +183,22 @@ class Bob:
             self.y -= y / (self.speed / self.game.tickSpeedMult)
             self.totalMoveY += 1 / (self.speed / self.game.tickSpeedMult)
 
-        # update of the memory tiles    
-        if len(self.memoryTiles) == 2 * self.memory and self.memory != 0:
-        # Calculate the range of indices to remove based on Bob's current direction
-            start_index = 0
-            end_index = 0
-            if self.totalMoveX > 0:
-                start_index = 0
-                end_index = int(self.totalMoveX * self.memory)
-            elif self.totalMoveX < 0:
-                start_index = int(-self.totalMoveX * self.memory)
-                end_index = len(self.memoryTiles)
-            elif self.totalMoveY > 0:
-                start_index = 0
-                end_index = int(self.totalMoveY * self.memory)
-            elif self.totalMoveY < 0:
-                start_index = int(-self.totalMoveY * self.memory)
-                end_index = len(self.memoryTiles)
-            # Remove the coordinates from memoryTiles
-            del self.memoryTiles[start_index:end_index]
-
+        # add the tile to memoryTiles
         self.memoryTiles.append([self.x, self.y])
+
+        # if memoryTiles is full, remove the oldest tile
+        if len(self.memoryTiles) >= 2 * self.memory and self.memory != 0:
+            # Supprime les coordonnées les plus anciennes
+            food_coordinates = self.memoryTiles.pop(0)
+
+            # search if the delete tile has a food on it
+            for food in self.game.tilemap.foods:
+                if food.x == food_coordinates[0] and food.y == food_coordinates[1]:
+                    # add the food to the food memory
+                    self.foodMemory.append(food)
+                    self.foodmem += 1
+                    self.memory -= 1
+                    break
 
     # initialize bob
     def init(self):
@@ -303,7 +298,7 @@ class Bob:
                     foods.append(food)
 
         if foods == [] : 
-            foods = self.foodMemory
+            foods = self.foodMemory.copy()
         
         # return the foods
         return foods
