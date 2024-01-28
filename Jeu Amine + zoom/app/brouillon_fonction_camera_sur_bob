@@ -1,0 +1,29 @@
+#Dans fichier tilemap.py
+
+self.bobs_diff = []
+if pygame.mouse.get_pressed()[0]:
+   mx, my = pygame.mouse.get_pos()
+   for bob in self.bobs:
+       bx,by= bob.get_position2()
+       diff = sqrt(pow(bx-mx,2)+pow(by-my,2))
+       self.bobs_diff.append(diff)
+   min_bob = min(self.bobs_diff)
+   for bob in self.bobs:
+       bx,by= bob.get_position2()
+       if min_bob == sqrt(pow(bx-mx,2)+pow(by-my,2)) :  
+      	 self.selected_bob = bob 
+
+#Dans fichier camera.py (à ameliorer vu que les coordonnées ne se updatent pas tout le temps)
+def focus_bob(self,bob):
+        bob_x, bob_y = bob.get_position2()
+
+        # Déterminez la différence entre la position actuelle de la caméra et celle du bob
+        diff_x = bob_x - self.moveCurrentPos[0]
+        diff_y = bob_y - self.moveCurrentPos[1]
+
+        # Mettez à jour la position de la caméra en fonction de la différence
+        self.x -= diff_x * self.moveAmount
+        self.y -= diff_y * self.moveAmount
+
+        # Mettez à jour la position actuelle du bob
+        self.moveCurrentPos = [bob_x, bob_y]
